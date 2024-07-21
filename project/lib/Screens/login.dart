@@ -22,39 +22,49 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final inputWidth = screenWidth * 0.8;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _accountController,
-              decoration: const InputDecoration(labelText: 'Account'),
-            ),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                print('Account: ${_accountController.text}');
-                print('Password: ${_passwordController.text}');
-              },
-              child: const Text('Login'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pushNamed(context, SignUpScreen.routename);
-              },
-              child: const Text('Don\'t have an account? Sign Up'),
-            ),
-          ],
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: inputWidth,
+                child: TextField(
+                  controller: _accountController,
+                  decoration: const InputDecoration(labelText: 'Account'),
+                ),
+              ),
+              SizedBox(
+                width: inputWidth,
+                child: TextField(
+                  controller: _passwordController,
+                  decoration: const InputDecoration(labelText: 'Password'),
+                  obscureText: true,
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  print('Account: ${_accountController.text}');
+                  print('Password: ${_passwordController.text}');
+                },
+                child: const Text('Login'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, SignUpScreen.routename);
+                },
+                child: const Text('Don\'t have an account? Sign Up'),
+              ),
+            ],
+          ),
         ),
       ),
     );
