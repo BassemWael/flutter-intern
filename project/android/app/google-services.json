@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "305900850410",
+    "project_id": "flutter-intern-97dad",
+    "storage_bucket": "flutter-intern-97dad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:305900850410:android:c2f6c198def04899aadb93",
+        "android_client_info": {
+          "package_name": "com.example.project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6ql2Hay6J3znKQEzxJ1olfo8h_Q0o1xU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

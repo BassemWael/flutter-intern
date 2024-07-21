@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project/Classes/firebase-auth.dart';
 import 'package:project/Screens/signup.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -12,12 +13,20 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _accountController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final AuthClass _authClass = AuthClass(); // Create an instance of AuthClass
 
   @override
   void dispose() {
     _accountController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void _login() async {
+    final user = await _authClass.signIn(
+      _accountController.text,
+      _passwordController.text,
+    );
   }
 
   @override
@@ -51,10 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  print('Account: ${_accountController.text}');
-                  print('Password: ${_passwordController.text}');
-                },
+                onPressed: _login,
                 child: const Text('Login'),
               ),
               TextButton(

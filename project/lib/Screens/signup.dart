@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project/Classes/firebase-auth.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -12,6 +13,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _accountController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final AuthClass _authClass = AuthClass();
 
   @override
   void dispose() {
@@ -21,6 +23,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
+void _signup() async {
+  final user = await _authClass.register(
+    _accountController.text,
+    _passwordController.text,
+  );
+}
+
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -28,6 +38,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign-Up'),
+        automaticallyImplyLeading: false,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -59,11 +70,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  print('Name: ${_nameController.text}');
-                  print('Account: ${_accountController.text}');
-                  print('Password: ${_passwordController.text}');
-                },
+                onPressed: _signup,
                 child: const Text('Sign Up'),
               ),
             ],
