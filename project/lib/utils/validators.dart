@@ -19,3 +19,11 @@ String? passwordSignupValidator(String? value) {
   }
   return null;
 }
+
+String? userNameSignupValidator(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Name must not be empty';
+  }
+  return null;
+}
+

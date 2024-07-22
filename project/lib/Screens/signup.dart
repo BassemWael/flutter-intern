@@ -1,5 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project/Classes/firebase-auth.dart';
+import 'package:project/Classes/users.dart';
+import 'package:project/Screens/profile.dart';
+import 'package:project/utils/boxes.dart';
 import 'package:project/utils/validators.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -27,15 +31,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   void _signup() async {
     if (_formKey.currentState!.validate()) {
-      await _authClass.register(
+      User? user = await _authClass.register(
+        _nameController.text,
         _accountController.text,
         _passwordController.text,
       );
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(
-      //       builder: (context) => ProfilePage()),
-      // );
+
+      if (user != null) {
+        boxUsers.put('key_${_accountController.text}',
+            Users(name: _nameController.text, email: _accountController.text));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProfilePage(email: _accountController.text),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registration failed. Please try again.')),
+        );
+      }
     }
   }
 

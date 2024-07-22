@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project/Classes/firebase-auth.dart';
+import 'package:project/Screens/profile.dart';
 import 'package:project/Screens/signup.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -22,11 +23,23 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _login() async {
-    await _authClass.signIn(
+  Future<void> _login() async {
+    final user = await _authClass.signIn(
       _accountController.text,
       _passwordController.text,
     );
+
+    if (user != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => ProfilePage(email: _accountController.text,)),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Login failed. Please check your credentials.')),
+      );
+    }
   }
 
   @override
@@ -60,7 +73,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _login,
+                onPressed: () async {
+                  await _login();
+                },
                 child: const Text('Login'),
               ),
               TextButton(
