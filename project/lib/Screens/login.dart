@@ -23,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login() async {
-    final user = await _authClass.signIn(
+    await _authClass.signIn(
       _accountController.text,
       _passwordController.text,
     );
