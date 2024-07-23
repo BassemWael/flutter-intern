@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:project/Classes/users.dart';
+import 'package:project/Classes/firebase-auth.dart';
+import 'package:project/Classes/firestore.dart';
 import 'package:project/Screens/login.dart';
+import 'package:project/Screens/profile.dart';
 import 'package:project/Screens/signup.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:project/utils/boxes.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -12,10 +13,15 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await Hive.initFlutter();
-  Hive.registerAdapter(UsersAdapter());
-  boxUsers = await Hive.openBox<Users>('usersBox');
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => FirestoreProvider()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -28,6 +34,9 @@ class MyApp extends StatelessWidget {
       routes: {
         SignUpScreen.routename: (context) => const SignUpScreen(),
         LoginScreen.routename: (context) => const LoginScreen(),
+        ProfilePage.routeName: (context) => ProfilePage(
+          email: ModalRoute.of(context)!.settings.arguments as String,
+        ),
       },
     );
   }

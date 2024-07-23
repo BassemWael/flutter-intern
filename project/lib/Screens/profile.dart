@@ -1,11 +1,15 @@
-import 'dart:io';
-
+import 'dart:typed_data';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:project/Classes/users.dart';
-import 'package:project/utils/boxes.dart';
+import 'package:provider/provider.dart';
+import 'package:project/Screens/update.dart';
+import 'package:project/Classes/firestore.dart';
 
 class ProfilePage extends StatefulWidget {
+  static const String routeName = "Profile";
+
   final String email;
   const ProfilePage({super.key, required this.email});
 
@@ -14,71 +18,135 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  File? _selectedImage;
-  String user() {
-    Users user = boxUsers.get('key_${widget.email}');
-    return "Welcome ${user.name}";
+  Uint8List? _selectedImage;
+  DocumentSnapshot? _userDocument;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
   }
 
-  Future _pickImageFromGallary() async {
-    final returnedImage =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (returnedImage == null) return;
-    setState(() {
-      _selectedImage = File(returnedImage.path);
-    });
+  Future<void> _fetchUserData() async {
+    final firestoreProvider = Provider.of<FirestoreProvider>(context, listen: false);
+    try {
+      DocumentSnapshot? userDoc = await firestoreProvider.getUserByEmail(widget.email);
+      setState(() {
+        _userDocument = userDoc;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error fetching user data: $e")),
+      );
+    }
   }
 
-  Future _pickImageFromCamera() async {
-    final returnedImage =
-        await ImagePicker().pickImage(source: ImageSource.camera);
-    if (returnedImage == null) return;
-    setState(() {
-      _selectedImage = File(returnedImage.path);
-    });
+  Future<void> _pickImageFromGallery() async {
+    try {
+      final returnedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (returnedImage == null) return;
+      var webImage = await returnedImage.readAsBytes();
+      setState(() {
+        _selectedImage = webImage;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error picking image from gallery: $e")),
+      );
+    }
+  }
+
+  Future<void> _pickImageFromCamera() async {
+    try {
+      final returnedImage = await ImagePicker().pickImage(source: ImageSource.camera);
+      if (returnedImage == null) return;
+      var webImage = await returnedImage.readAsBytes();
+      setState(() {
+        _selectedImage = webImage;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error picking image from camera: $e")),
+      );
+    }
+  }
+
+  Future<void> _navigateToUpdateProfile() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UpdateProfileScreen(
+          userId: _userDocument!.id,
+          name: _userDocument!['name'],
+          age: _userDocument!['age'],
+          email: _userDocument!['email'],
+        ),
+      ),
+    );
+
+    if (result == true) {
+      // Refetch user data if the profile was updated
+      _fetchUserData();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_userDocument == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Profile')),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    var userData = _userDocument!.data() as Map<String, dynamic>;
     final screenWidth = MediaQuery.of(context).size.width;
     final inputWidth = screenWidth * 0.8;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(user()),
+        title: const Text('Profile'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: _navigateToUpdateProfile,
+          ),
+        ],
       ),
       body: Center(
         child: SizedBox(
           width: inputWidth,
           child: Column(
             children: [
+              Text('Name: ${userData['name']}'),
+              Text('Age: ${userData['age']}'),
+              Text('Email: ${userData['email']}'),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                    onPressed: () {
-                      _pickImageFromCamera();
-                    },
+                    onPressed: _pickImageFromCamera,
                     child: const Text('Camera'),
                   ),
-                  const SizedBox(
-                    width: 30,
-                  ),
+                  const SizedBox(width: 30),
                   ElevatedButton(
-                    onPressed: () {
-                      _pickImageFromGallary();
-                    },
-                    child: const Text('Gallary'),
+                    onPressed: _pickImageFromGallery,
+                    child: const Text('Gallery'),
                   ),
                 ],
               ),
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
               _selectedImage != null
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(120),
-                      child: Image.file(_selectedImage!))
-                  : const Text("Please Select an image!")
+                      child: Image.memory(
+                        _selectedImage!,
+                        width: 240,
+                        height: 240,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : const Text("Please select an image!"),
             ],
           ),
         ),
