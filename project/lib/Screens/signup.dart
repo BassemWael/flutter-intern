@@ -1,5 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project/Classes/firebase-auth.dart';
+import 'package:project/Classes/users.dart';
+import 'package:project/Screens/profile.dart';
+import 'package:project/utils/boxes.dart';
+import 'package:project/utils/validators.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -10,6 +15,7 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _accountController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -23,18 +29,36 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
-void _signup() async {
-  final user = await _authClass.register(
-    _accountController.text,
-    _passwordController.text,
-  );
-}
+  void _signup() async {
+    if (_formKey.currentState!.validate()) {
+      User? user = await _authClass.register(
+        _nameController.text,
+        _accountController.text,
+        _passwordController.text,
+      );
 
+      if (user != null) {
+        boxUsers.put('key_${_accountController.text}',
+            Users(name: _nameController.text, email: _accountController.text));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProfilePage(email: _accountController.text),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registration failed. Please try again.')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final inputWidth = screenWidth * 0.8;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign-Up'),
@@ -43,37 +67,42 @@ void _signup() async {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: inputWidth,
-                child: TextField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(labelText: 'Name'),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: inputWidth,
+                  child: TextFormField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(labelText: 'Name'),
+                  ),
                 ),
-              ),
-              SizedBox(
-                width: inputWidth,
-                child: TextField(
-                  controller: _accountController,
-                  decoration: const InputDecoration(labelText: 'Account'),
+                SizedBox(
+                  width: inputWidth,
+                  child: TextFormField(
+                    controller: _accountController,
+                    decoration: const InputDecoration(labelText: 'Email'),
+                    validator: emailSignupValidator,
+                  ),
                 ),
-              ),
-              SizedBox(
-                width: inputWidth,
-                child: TextField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  obscureText: true,
+                SizedBox(
+                  width: inputWidth,
+                  child: TextFormField(
+                    controller: _passwordController,
+                    decoration: const InputDecoration(labelText: 'Password'),
+                    obscureText: true,
+                    validator: passwordSignupValidator,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _signup,
-                child: const Text('Sign Up'),
-              ),
-            ],
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _signup,
+                  child: const Text('Sign Up'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
