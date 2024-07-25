@@ -43,12 +43,16 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final inputWidth = screenWidth * 0.8;
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      backgroundColor: Colors.greenAccent,
+      appBar: AppBar(
+        title: const Text('Login'),
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.greenAccent,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
@@ -73,13 +77,19 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _login,
-                child: const Text('Login'),
+                child: const Text(
+                  'Login',
+                  style: TextStyle(color: Colors.black),
+                ),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.pushNamed(context, SignUpScreen.routename);
                 },
-                child: const Text('Don\'t have an account? Sign Up'),
+                child: const Text(
+                  'Don\'t have an account? Sign Up',
+                  style: TextStyle(color: Colors.black),
+                ),
               ),
             ],
           ),

@@ -1,6 +1,9 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:project/Classes/firebase-auth.dart';
 import 'package:project/Classes/firestore.dart';
+import 'package:project/Screens/homescreen.dart';
 import 'package:project/Screens/login.dart';
 import 'package:project/Screens/profile.dart';
 import 'package:project/Screens/signup.dart';
@@ -13,6 +16,18 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  if (!kIsWeb) {
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+  }
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
+  };
+
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack);
+    return true;
+  };
+
   runApp(
     MultiProvider(
       providers: [
@@ -30,13 +45,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: LoginScreen.routename,
+      debugShowCheckedModeBanner: false,
+      initialRoute: HomePage.routename,
       routes: {
+        HomePage.routename: (context) => const HomePage(),
         SignUpScreen.routename: (context) => const SignUpScreen(),
         LoginScreen.routename: (context) => const LoginScreen(),
         ProfilePage.routeName: (context) => ProfilePage(
-          email: ModalRoute.of(context)!.settings.arguments as String,
-        ),
+              email: ModalRoute.of(context)!.settings.arguments as String,
+            ),
       },
     );
   }

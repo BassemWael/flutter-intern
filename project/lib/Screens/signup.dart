@@ -85,7 +85,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final inputWidth = screenWidth * 0.8;
 
     return Scaffold(
+      backgroundColor: Colors.blueAccent,
       appBar: AppBar(
+        backgroundColor: Colors.blueAccent,
         title: const Text('Sign-Up'),
         automaticallyImplyLeading: false,
       ),
@@ -93,51 +95,54 @@ class _SignUpScreenState extends State<SignUpScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Center(
           child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: inputWidth,
-                  child: TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(labelText: 'Name'),
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: inputWidth,
+                    child: TextFormField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(labelText: 'Name'),
+                      validator: userNameSignupValidator,
+                    ),
                   ),
-                ),
-                SizedBox(
-                  width: inputWidth,
-                  child: TextFormField(
-                    controller: _accountController,
-                    decoration: const InputDecoration(labelText: 'Email'),
-                    validator: emailSignupValidator,
+                  SizedBox(
+                    width: inputWidth,
+                    child: TextFormField(
+                      controller: _accountController,
+                      decoration: const InputDecoration(labelText: 'Email'),
+                      validator: emailSignupValidator,
+                    ),
                   ),
-                ),
-                SizedBox(
-                  width: inputWidth,
-                  child: TextFormField(
-                    controller: _ageController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: 'Age'),
-                    validator: ageSignupValidator,
+                  SizedBox(
+                    width: inputWidth,
+                    child: TextFormField(
+                      controller: _ageController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(labelText: 'Age'),
+                      validator: ageSignupValidator,
+                    ),
                   ),
-                ),
-                SizedBox(
-                  width: inputWidth,
-                  child: TextFormField(
-                    controller: _passwordController,
-                    decoration: const InputDecoration(labelText: 'Password'),
-                    obscureText: true,
-                    validator: passwordSignupValidator,
+                  SizedBox(
+                    width: inputWidth,
+                    child: TextFormField(
+                      controller: _passwordController,
+                      decoration: const InputDecoration(labelText: 'Password'),
+                      obscureText: true,
+                      validator: passwordSignupValidator,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _signup,
-                  child: const Text('Sign Up'),
-                ),
-              ],
-            ),
-          ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _signup,
+                    child: const Text(
+                      'Sign Up',
+                      style: TextStyle(color: Colors.blueAccent),
+                    ),
+                  ),
+                ],
+              )),
         ),
       ),
     );

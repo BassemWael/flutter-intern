@@ -35,7 +35,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   }
 
   Future<void> _updateProfile() async {
-    final firestoreProvider = Provider.of<FirestoreProvider>(context, listen: false);
+    final firestoreProvider =
+        Provider.of<FirestoreProvider>(context, listen: false);
     final auth = FirebaseAuth.instance.currentUser;
 
     if (auth == null) {
@@ -57,14 +58,12 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       // Update Firebase Authentication
       await auth.updateProfile(displayName: _nameController.text);
       if (_emailController.text != widget.email) {
-        await auth.updateEmail(_emailController.text);
+        await auth.verifyBeforeUpdateEmail(_emailController.text);
       }
 
       Navigator.pop(context, true); // Return true to indicate successful update
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to update profile: $e")),
-      );
+      print("Failed to update profile: $e");
     }
   }
 

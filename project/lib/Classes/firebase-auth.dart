@@ -14,7 +14,6 @@ class AuthProvider extends ChangeNotifier {
 
       if (user != null) {
         await user.updateProfile(displayName: name);
-        //await user.sendEmailVerification();
       }
 
       return user;

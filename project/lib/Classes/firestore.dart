@@ -12,6 +12,8 @@ class FirestoreProvider extends ChangeNotifier {
         'name': name,
         'age': age,
         'email': email,
+        'image':
+            'https://static.vecteezy.com/system/resources/previews/001/840/618/original/picture-profile-icon-male-icon-human-or-people-sign-and-symbol-free-vector.jpg',
       });
     } catch (e) {
       print("Failed to add user: $e");
@@ -19,24 +21,23 @@ class FirestoreProvider extends ChangeNotifier {
     }
   }
 
-Future<DocumentSnapshot?> getUserByEmail(String email) async {
-    try {
-      final querySnapshot = await _firestore
-          .collection('users')
-          .where('email', isEqualTo: email)
-          .limit(1)
-          .get();
-
-      if (querySnapshot.docs.isNotEmpty) {
-        return querySnapshot.docs.first;
-      }
-    } catch (e) {
-      debugPrint('Error getting user by email: $e');
+  Future<DocumentSnapshot?> getUserByEmail(String email) async {
+    QuerySnapshot query = await _firestore
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .limit(1)
+        .get();
+    if (query.docs.isNotEmpty) {
+      return query.docs.first;
     }
     return null;
   }
 
-  Future<void> updateUser(String userId, String name, int age, String email) async {
+  Future<void> updateImage(String userId, String image) async {
+    await _firestore.collection('users').doc(userId).update({'image': image});
+  }
+  Future<void> updateUser(
+      String userId, String name, int age, String email) async {
     try {
       await _firestore.collection('users').doc(userId).update({
         'name': name,
