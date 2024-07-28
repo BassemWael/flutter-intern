@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project/Classes/firebase-auth.dart';
 import 'package:project/Classes/firestore.dart';
+import 'package:project/Classes/theme.dart';
 import 'package:provider/provider.dart';
 
 import 'package:project/Screens/profile.dart';
@@ -84,10 +85,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final inputWidth = screenWidth * 0.8;
 
-    return Scaffold(
-      backgroundColor: Colors.blueAccent,
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueAccent,
         title: const Text('Sign-Up'),
         automaticallyImplyLeading: false,
       ),
@@ -138,13 +139,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     onPressed: _signup,
                     child: const Text(
                       'Sign Up',
-                      style: TextStyle(color: Colors.blueAccent),
                     ),
                   ),
                 ],
               )),
         ),
       ),
+    );
+      },
     );
   }
 }

@@ -4,7 +4,6 @@ import 'package:project/Screens/profile.dart';
 import 'package:project/Screens/signup.dart';
 import 'package:provider/provider.dart';
 
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
   static const String routename = "Login";
@@ -34,7 +33,9 @@ class _LoginScreenState extends State<LoginScreen> {
     if (user != null) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => ProfilePage(email: _accountController.text)),
+        MaterialPageRoute(
+          builder: (context) => ProfilePage(email: _accountController.text),
+        ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -43,15 +44,13 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final inputWidth = screenWidth * 0.8;
     return Scaffold(
-      backgroundColor: Colors.greenAccent,
       appBar: AppBar(
         title: const Text('Login'),
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.greenAccent,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -77,19 +76,13 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _login,
-                child: const Text(
-                  'Login',
-                  style: TextStyle(color: Colors.black),
-                ),
+                child: const Text('Login'),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.pushNamed(context, SignUpScreen.routename);
                 },
-                child: const Text(
-                  'Don\'t have an account? Sign Up',
-                  style: TextStyle(color: Colors.black),
-                ),
+                child: const Text('Don\'t have an account? Sign Up'),
               ),
             ],
           ),

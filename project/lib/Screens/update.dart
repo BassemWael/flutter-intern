@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:project/Classes/firestore.dart';
+import 'package:project/Classes/theme.dart';
 import 'package:provider/provider.dart';
 
 class UpdateProfileScreen extends StatefulWidget {
@@ -69,34 +70,38 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Update Profile')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Name'),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return Scaffold(
+          appBar: AppBar(title: const Text('Update Profile')),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                TextField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(labelText: 'Name'),
+                ),
+                TextField(
+                  controller: _ageController,
+                  decoration: const InputDecoration(labelText: 'Age'),
+                  keyboardType: TextInputType.number,
+                ),
+                TextField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(labelText: 'Email'),
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _updateProfile,
+                  child: const Text('Update'),
+                ),
+              ],
             ),
-            TextField(
-              controller: _ageController,
-              decoration: const InputDecoration(labelText: 'Age'),
-              keyboardType: TextInputType.number,
-            ),
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _updateProfile,
-              child: const Text('Update'),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
