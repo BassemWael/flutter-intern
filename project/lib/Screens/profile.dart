@@ -1,17 +1,20 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_network/image_network.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:project/Classes/realtime_database.dart';
 import 'package:project/Screens/login.dart';
 import 'package:provider/provider.dart';
 import 'package:project/Screens/update.dart';
 import 'package:project/Classes/firestore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfilePage extends StatefulWidget {
   static const String routeName = "Profile";
@@ -26,11 +29,17 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   DocumentSnapshot? _userDocument;
   String? _selectedImage;
+  String? _name;
   final ImagePicker _picker = ImagePicker();
-
+  DatabaseReference ref = FirebaseDatabase.instanceFor(
+          app: Firebase.app(),
+          databaseURL:
+              'https://flutter-intern-97dad-default-rtdb.europe-west1.firebasedatabase.app')
+      .ref("users/123");
   @override
   void initState() {
     super.initState();
+
     _fetchUserData();
   }
 
@@ -45,9 +54,7 @@ class _ProfilePageState extends State<ProfilePage> {
         _selectedImage = _userDocument?['image'];
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error fetching user data: $e")),
-      );
+      print("Error updating name: $e");
     }
   }
 
@@ -56,9 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
       await FirebaseAuth.instance.signOut();
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-            builder: (context) =>
-                LoginScreen()), // Ensure this points to your login screen
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -81,7 +86,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
 
     if (result == true) {
-      // Refetch user data if the profile was updated
       _fetchUserData();
     }
   }
@@ -101,7 +105,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: Text(AppLocalizations.of(context)!.profile),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -118,12 +122,53 @@ class _ProfilePageState extends State<ProfilePage> {
           width: inputWidth,
           child: Column(
             children: [
-              Text('Name: ${userData['name']}'),
-              Text('Age: ${userData['age']}'),
-              Text('Email: ${FirebaseAuth.instance.currentUser?.email}'),
+              Text(
+                  '${AppLocalizations.of(context)!.name}: ${userData['name']}'),
+              Text('${AppLocalizations.of(context)!.age}: ${userData['age']}'),
+              Text(
+                  '${AppLocalizations.of(context)!.email}: ${FirebaseAuth.instance.currentUser?.email}'),
+              FutureBuilder<String?>(
+                future:
+                    _fetchUsername(), // The async function that returns a Future
+                builder:
+                    (BuildContext context, AsyncSnapshot<String?> snapshot) {
+                  // Check the state of the Future
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator(); // Display a loading indicator while waiting
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}'); // Handle errors
+                  } else if (snapshot.hasData) {
+                    return Text(
+                        'realtimeName: ${snapshot.data}'); // Display the data
+                  } else {
+                    return Text(
+                        'No data'); // Handle the case where no data is available
+                  }
+                },
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  String? newName = await _showNameDialog(context, _name ?? '');
+                  print("33333333");
+                  if (newName != null && newName.isNotEmpty) {
+                    DatabaseReference ref = FirebaseDatabase.instanceFor(
+                            app: Firebase.app(),
+                            databaseURL:
+                                'https://flutter-intern-97dad-default-rtdb.europe-west1.firebasedatabase.app')
+                        .ref("users/123");
+
+                    await ref.set(newName);
+                    setState(() {
+                      print(newName);
+                      _name = newName;
+                    });
+                  }
+                },
+                child: Text('editRealtimeName'),
+              ),
               ElevatedButton(
                 onPressed: _updateImage,
-                child: const Text('Camera'),
+                child: Text(AppLocalizations.of(context)!.camera),
               ),
               const SizedBox(height: 20),
               ClipRRect(
@@ -153,6 +198,32 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Future<String?> _showNameDialog(BuildContext context, String currentName) {
+    TextEditingController controller = TextEditingController(text: currentName);
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("editRealtimeName"),
+          content: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              hintText: "enterName",
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(controller.text);
+              },
+              child: Text("save"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _updateImage() async {
     if (!kIsWeb) {
       final pickedFile = await _picker.pickImage(source: ImageSource.camera);
@@ -161,16 +232,12 @@ class _ProfilePageState extends State<ProfilePage> {
         File file = File(pickedFile.path);
 
         try {
-          // Create a unique file name
           String fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-          // Get a reference to the Firebase Storage bucket
           Reference storageRef =
               FirebaseStorage.instance.ref().child('images/$fileName');
 
-          // Upload the file
           UploadTask uploadTask = storageRef.putFile(file);
 
-          // Get the download URL
           TaskSnapshot taskSnapshot = await uploadTask;
           String downloadURL = await taskSnapshot.ref.getDownloadURL();
 
@@ -178,13 +245,12 @@ class _ProfilePageState extends State<ProfilePage> {
             _selectedImage = downloadURL;
           });
 
-          // Update the user document with the new image URL
           final firestoreProvider =
               Provider.of<FirestoreProvider>(context, listen: false);
           await firestoreProvider.updateImage(_userDocument!.id, downloadURL);
 
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Image uploaded successfully")),
+            const SnackBar(content: Text("Image uploaded successfully")),
           );
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -193,26 +259,21 @@ class _ProfilePageState extends State<ProfilePage> {
         }
       }
     } else {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.image,
-      );
+      FilePickerResult? result =
+          await FilePicker.platform.pickFiles(type: FileType.image);
 
       if (result != null && result.files.isNotEmpty) {
         PlatformFile file = result.files.first;
 
         try {
-          // Create a unique file name
           String fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-          // Get a reference to the Firebase Storage bucket
           Reference storageRef =
               FirebaseStorage.instance.ref().child('images/$fileName');
 
-          // Upload the file
           Uint8List? fileBytes = file.bytes;
           if (fileBytes != null) {
             UploadTask uploadTask = storageRef.putData(fileBytes);
 
-            // Get the download URL
             TaskSnapshot taskSnapshot = await uploadTask;
             String downloadURL = await taskSnapshot.ref.getDownloadURL();
 
@@ -220,13 +281,12 @@ class _ProfilePageState extends State<ProfilePage> {
               _selectedImage = downloadURL;
             });
 
-            // Update the user document with the new image URL
             final firestoreProvider =
                 Provider.of<FirestoreProvider>(context, listen: false);
             await firestoreProvider.updateImage(_userDocument!.id, downloadURL);
 
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Image uploaded successfully")),
+              const SnackBar(content: Text("Image uploaded successfully")),
             );
           }
         } catch (e) {
@@ -236,5 +296,18 @@ class _ProfilePageState extends State<ProfilePage> {
         }
       }
     }
+  }
+
+  Future<String?> _fetchUsername() async {
+    String? data;
+    DatabaseReference ref = FirebaseDatabase.instanceFor(
+            app: Firebase.app(),
+            databaseURL:
+                'https://flutter-intern-97dad-default-rtdb.europe-west1.firebasedatabase.app')
+        .ref("users/123");
+
+    DatabaseEvent event = await ref.once();
+    data = event.snapshot.value as String?;
+    return data;
   }
 }

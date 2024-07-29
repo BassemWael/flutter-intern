@@ -3,11 +3,12 @@ import 'package:hive/hive.dart';
 
 class ThemeProvider with ChangeNotifier {
   static const String _themeKey = 'theme';
-  Box _box;
+  final Box _box;
   ThemeData _themeData;
 
-  ThemeProvider(this._box)
-      : _themeData = _box.get(_themeKey, defaultValue: false) ? ThemeData.dark() : ThemeData.light();
+  ThemeProvider(this._box) : _themeData = _box.get(_themeKey, defaultValue: false) 
+    ? ThemeData.dark() 
+    : ThemeData.light();
 
   ThemeData get themeData => _themeData;
 
@@ -20,7 +21,7 @@ class ThemeProvider with ChangeNotifier {
   }
 
   void toggleTheme() {
-    if (_themeData.brightness == Brightness.dark) {
+    if (isDarkMode) {
       setTheme(ThemeData.light());
     } else {
       setTheme(ThemeData.dark());

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:project/services/localization_services.dart';
 import 'package:provider/provider.dart';
 import 'package:project/Classes/theme.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'login.dart';
 import 'signup.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
-  static const String routename = "Home page";
+  static const String routename = "Homepage";
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +24,17 @@ class HomePage extends StatelessWidget {
                   themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode,
                 ),
               ),
+              IconButton(
+                onPressed: () {
+                  final localeService = Provider.of<LocalizationServices>(context, listen: false);
+                  if (localeService.locale.languageCode == 'ar') {
+                    localeService.changeLocale('en');
+                  } else {
+                    localeService.changeLocale('ar');
+                  }
+                },
+                icon: Icon(Icons.language),
+              ),
             ],
           ),
           body: Center(
@@ -30,16 +43,16 @@ class HomePage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    'Welcome',
+                  Text(
+                    AppLocalizations.of(context)!.welcome,
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const Text(
-                    'Please choose an option below:',
+                  Text(
+                    AppLocalizations.of(context)!.pleasechooseanoptionbelow,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -52,13 +65,14 @@ class HomePage extends StatelessWidget {
                       Navigator.pushNamed(context, SignUpScreen.routename);
                     },
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 20),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),
                       ),
                     ),
-                    child: const Text(
-                      'Sign Up',
+                    child: Text(
+                      AppLocalizations.of(context)!.signUp,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -71,13 +85,14 @@ class HomePage extends StatelessWidget {
                       Navigator.pushNamed(context, LoginScreen.routename);
                     },
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 20),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),
                       ),
                     ),
-                    child: const Text(
-                      'Login',
+                    child: Text(
+                      AppLocalizations.of(context)!.login,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -94,13 +109,14 @@ class HomePage extends StatelessWidget {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 20),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),
                       ),
                     ),
-                    child: const Text(
-                      'Exception',
+                    child: Text(
+                      AppLocalizations.of(context)!.exception,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

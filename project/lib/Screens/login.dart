@@ -3,6 +3,7 @@ import 'package:project/Classes/firebase-auth.dart';
 import 'package:project/Screens/profile.dart';
 import 'package:project/Screens/signup.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -39,7 +40,8 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login failed. Please check your credentials.')),
+        const SnackBar(
+            content: Text('Login failed. Please check your credentials.')),
       );
     }
   }
@@ -62,27 +64,29 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: inputWidth,
                 child: TextField(
                   controller: _accountController,
-                  decoration: const InputDecoration(labelText: 'Account'),
+                  decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.email),
                 ),
               ),
               SizedBox(
                 width: inputWidth,
                 child: TextField(
                   controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'Password'),
+                  decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.password),
                   obscureText: true,
                 ),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _login,
-                child: const Text('Login'),
+                child:  Text(AppLocalizations.of(context)!.login),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.pushNamed(context, SignUpScreen.routename);
                 },
-                child: const Text('Don\'t have an account? Sign Up'),
+                child: Text(AppLocalizations.of(context)!.dont),
               ),
             ],
           ),

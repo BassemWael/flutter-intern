@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:project/Classes/firestore.dart';
 import 'package:project/Classes/theme.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UpdateProfileScreen extends StatefulWidget {
   final String userId;
@@ -73,29 +74,32 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         return Scaffold(
-          appBar: AppBar(title: const Text('Update Profile')),
+          appBar: AppBar(title:  Text("${AppLocalizations.of(context)!.update} ${AppLocalizations.of(context)!.profile}")),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
                 TextField(
                   controller: _nameController,
-                  decoration: const InputDecoration(labelText: 'Name'),
+                  decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.name),
                 ),
                 TextField(
                   controller: _ageController,
-                  decoration: const InputDecoration(labelText: 'Age'),
+                  decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.age),
                   keyboardType: TextInputType.number,
                 ),
                 TextField(
                   controller: _emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
+                  decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.email),
                   keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _updateProfile,
-                  child: const Text('Update'),
+                  child:  Text(AppLocalizations.of(context)!.update),
                 ),
               ],
             ),

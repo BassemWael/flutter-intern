@@ -1,0 +1,15 @@
+{
+    "name": "name",
+    "pleasechooseanoptionbelow": "Please choose an option below:",
+    "signUp": "Sign Up",
+    "login": "Login",
+    "welcome": "Welcome",
+    "exception": "Exception",
+    "email": "Email",
+    "password": "Password",
+    "age": "Age",
+    "dont": "Don't have an account? Sign Up",
+    "profile": "Profile",
+    "camera": "Photo",
+    "update": "Update"
+}

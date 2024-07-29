@@ -3,7 +3,7 @@ import 'package:project/Classes/firebase-auth.dart';
 import 'package:project/Classes/firestore.dart';
 import 'package:project/Classes/theme.dart';
 import 'package:provider/provider.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:project/Screens/profile.dart';
 import 'package:project/utils/validators.dart';
 
@@ -89,7 +89,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       builder: (context, themeProvider, child) {
         return Scaffold(
       appBar: AppBar(
-        title: const Text('Sign-Up'),
+        title:  Text(AppLocalizations.of(context)!.signUp),
         automaticallyImplyLeading: false,
       ),
       body: Padding(
@@ -104,7 +104,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     width: inputWidth,
                     child: TextFormField(
                       controller: _nameController,
-                      decoration: const InputDecoration(labelText: 'Name'),
+                      decoration:  InputDecoration(labelText: AppLocalizations.of(context)!.name),
                       validator: userNameSignupValidator,
                     ),
                   ),
@@ -112,7 +112,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     width: inputWidth,
                     child: TextFormField(
                       controller: _accountController,
-                      decoration: const InputDecoration(labelText: 'Email'),
+                      decoration:  InputDecoration(labelText: AppLocalizations.of(context)!.email),
                       validator: emailSignupValidator,
                     ),
                   ),
@@ -121,7 +121,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     child: TextFormField(
                       controller: _ageController,
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(labelText: 'Age'),
+                      decoration:  InputDecoration(labelText: AppLocalizations.of(context)!.age),
                       validator: ageSignupValidator,
                     ),
                   ),
@@ -129,7 +129,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     width: inputWidth,
                     child: TextFormField(
                       controller: _passwordController,
-                      decoration: const InputDecoration(labelText: 'Password'),
+                      decoration:  InputDecoration(labelText:  AppLocalizations.of(context)!.password),
                       obscureText: true,
                       validator: passwordSignupValidator,
                     ),
@@ -137,8 +137,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: _signup,
-                    child: const Text(
-                      'Sign Up',
+                    child:  Text(
+                      AppLocalizations.of(context)!.signUp,
                     ),
                   ),
                 ],

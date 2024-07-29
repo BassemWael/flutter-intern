@@ -3,15 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:project/Classes/realtime_database.dart';
+import 'package:project/services/localization_services.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'Classes/firebase-auth.dart';
 import 'Classes/firestore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'Classes/theme.dart';
 import 'Screens/homescreen.dart';
 import 'Screens/login.dart';
 import 'Screens/profile.dart';
 import 'Screens/signup.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +37,9 @@ void main() async {
   await Hive.initFlutter();
   var box = await Hive.openBox('settings');
 
+  LocalizationServices localizationServices = LocalizationServices();
+  await localizationServices.initLocalization();
+
   runApp(
     MultiProvider(
       providers: [
@@ -41,6 +48,10 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) => ThemeProvider(box),
         ),
+        ChangeNotifierProvider<LocalizationServices>(
+            create: (_) => localizationServices),
+            ChangeNotifierProvider<RealtimeDB>(
+            create: (_) => RealtimeDB()),
       ],
       child: MyApp(),
     ),
@@ -54,17 +65,30 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: themeProvider.themeData,
-          initialRoute: HomePage.routename,
-          routes: {
-            HomePage.routename: (context) => const HomePage(),
-            SignUpScreen.routename: (context) => const SignUpScreen(),
-            LoginScreen.routename: (context) => const LoginScreen(),
-            ProfilePage.routeName: (context) => ProfilePage(
-              email: ModalRoute.of(context)!.settings.arguments as String,
-            ),
+        return Consumer<LocalizationServices>(
+          builder: (context, localizationServices, child) {
+            return MaterialApp(
+              localizationsDelegates: [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              locale: localizationServices.locale,
+              supportedLocales: AppLocalizations.supportedLocales,
+              debugShowCheckedModeBanner: false,
+              theme: themeProvider.themeData,
+              home: const HomePage(),
+              routes: {
+                HomePage.routename: (context) => const HomePage(),
+                SignUpScreen.routename: (context) => const SignUpScreen(),
+                LoginScreen.routename: (context) => const LoginScreen(),
+                ProfilePage.routeName: (context) => ProfilePage(
+                      email:
+                          ModalRoute.of(context)!.settings.arguments as String,
+                    ),
+              },
+            );
           },
         );
       },
