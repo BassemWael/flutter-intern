@@ -46,6 +46,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '305900850410',
     projectId: 'flutter-intern-97dad',
     authDomain: 'flutter-intern-97dad.firebaseapp.com',
+    databaseURL: 'https://flutter-intern-97dad-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'flutter-intern-97dad.appspot.com',
     measurementId: 'G-FJZCYGD198',
   );
@@ -55,6 +56,7 @@ class DefaultFirebaseOptions {
     appId: '1:305900850410:android:c2f6c198def04899aadb93',
     messagingSenderId: '305900850410',
     projectId: 'flutter-intern-97dad',
+    databaseURL: 'https://flutter-intern-97dad-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'flutter-intern-97dad.appspot.com',
   );
 
@@ -63,6 +65,7 @@ class DefaultFirebaseOptions {
     appId: '1:305900850410:ios:3a657eecb11ca470aadb93',
     messagingSenderId: '305900850410',
     projectId: 'flutter-intern-97dad',
+    databaseURL: 'https://flutter-intern-97dad-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'flutter-intern-97dad.appspot.com',
     iosBundleId: 'com.example.project',
   );
@@ -72,6 +75,7 @@ class DefaultFirebaseOptions {
     appId: '1:305900850410:ios:3a657eecb11ca470aadb93',
     messagingSenderId: '305900850410',
     projectId: 'flutter-intern-97dad',
+    databaseURL: 'https://flutter-intern-97dad-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'flutter-intern-97dad.appspot.com',
     iosBundleId: 'com.example.project',
   );
@@ -82,7 +86,9 @@ class DefaultFirebaseOptions {
     messagingSenderId: '305900850410',
     projectId: 'flutter-intern-97dad',
     authDomain: 'flutter-intern-97dad.firebaseapp.com',
+    databaseURL: 'https://flutter-intern-97dad-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'flutter-intern-97dad.appspot.com',
     measurementId: 'G-PXDF2917E9',
   );
+
 }

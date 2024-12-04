@@ -27,3 +27,14 @@ String? userNameSignupValidator(String? value) {
   return null;
 }
 
+String? ageSignupValidator(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Age must not be empty';
+  }
+  String pattern = r'^\d+$';
+  RegExp regex = RegExp(pattern);
+  if (!regex.hasMatch(value)) {
+    return 'Age must be written in numbers';
+  }
+  return null;
+}
